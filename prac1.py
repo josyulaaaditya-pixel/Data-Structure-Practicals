@@ -1,27 +1,44 @@
-lib_data = {
-    "M1":["book A", "book B"],
-    "M2":[],
-    "M3":["book C", "book A"],
-    "M4":["book A"],
-    "M5":["book B", "book C"],
-    "M6":["book A", "book B", "book C", "book D"]
+n = int(input("Enter number of books in the library: "))
 
-}
-total_mem = len(lib_data)
-print("Total number of members in the library:", total_mem)
+library_records = {}
 
-total_borrowed = sum(len(books) for books in lib_data.values())
-avg = total_borrowed / total_mem
-print("Total number of borrowed books:", total_borrowed)
-print("Average number of books borrowed per member:", avg)
+# Take book name and borrow count from user
+for i in range(n):
+    book_name = input(f"Enter name of book {i+1}: ")
+    borrow_count = int(input(f"Enter borrow count for '{book_name}': "))
+    library_records[book_name] = borrow_count
 
-all_books = []
-for books in lib_data.values():
-    all_books.extend(books)
-most = max(set(all_books), key=all_books.count)
-print("Most borrowed book:", most)  
-min_borrowed = min(set(all_books), key=all_books.count)
-print("Least borrowed book:", min_borrowed) 
-zero = sum(1 for books in lib_data.values() if len(books) == 0)
-print("Number of members who have not borrowed any books:", zero)
-print("Mode:", most)
+# 1. Compute average number of books borrowed
+avg_borrowed = sum(library_records.values()) / len(library_records)
+
+# 2. Book with highest and lowest borrowings
+highest_book = max(library_records, key=library_records.get)
+lowest_book = min(library_records, key=library_records.get)
+
+# 3. Count members who have not borrowed any books
+zero_borrow_count = list(library_records.values()).count(0)
+
+# 4. Most frequently borrowed book(s) without using mode()
+borrow_counts = list(library_records.values())
+
+# Count frequencies
+freq = {}
+for count in borrow_counts:
+    freq[count] = freq.get(count, 0) + 1
+
+# Find max frequency value
+max_freq = max(freq.values())
+
+# Get all borrow counts having this max frequency
+most_frequent_counts = [count for count, f in freq.items() if f == max_freq]
+
+# Get all books having one of those counts
+most_frequent_books = [book for book, count in library_records.items() if count in most_frequent_counts]
+
+# Display results
+print("\n--- Library Borrowing Records Analysis ---")
+print(f"Average books borrowed: {avg_borrowed}")
+print(f"Book with highest borrowings: {highest_book} ({library_records[highest_book]} times)")
+print(f"Book with lowest borrowings: {lowest_book} ({library_records[lowest_book]} times)")
+print(f"Number of members with zero borrowings: {zero_borrow_count}")
+print(f"Most frequently borrowed book(s): {most_frequent_books} ({most_frequent_counts[0]} times)")
